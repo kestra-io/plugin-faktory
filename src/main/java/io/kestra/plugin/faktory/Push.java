@@ -168,8 +168,8 @@ public class Push extends AbstractFaktoryConnection implements RunnableTask<Push
     public Push.Output run(RunContext runContext) throws Exception {
         var logger = runContext.logger();
 
-        var rJobType = runContext.render(this.jobType).as(String.class)
-            .orElseThrow(() -> new IllegalArgumentException("`jobType` is required to submit a Faktory job"));
+        // jobType is @NotNull, enforced by bean validation before rendering, so this always resolves
+        var rJobType = runContext.render(this.jobType).as(String.class).orElseThrow();
         var rArgs = runContext.render(this.args).asList(Object.class);
         var rQueue = runContext.render(this.queue).as(String.class).orElse(DEFAULT_QUEUE);
         var rRetries = runContext.render(this.retries).as(Integer.class).orElse(DEFAULT_RETRIES);

@@ -96,6 +96,12 @@ public abstract class AbstractFaktoryConnection extends Task {
             socket.connect(new InetSocketAddress(rHost, rPort), CONNECT_TIMEOUT_MILLIS);
             socket.setSoTimeout(READ_TIMEOUT_MILLIS);
             if (socket instanceof SSLSocket sslSocket) {
+                // SSLSocketFactory.createSocket() validates the certificate chain but not the hostname;
+                // without this, a MITM holding any CA-trusted cert can intercept and replay Faktory's
+                // salt-based (non-nonce) pwdhash against the real server.
+                var params = sslSocket.getSSLParameters();
+                params.setEndpointIdentificationAlgorithm("HTTPS");
+                sslSocket.setSSLParameters(params);
                 sslSocket.startHandshake();
             }
         } catch (IOException e) {

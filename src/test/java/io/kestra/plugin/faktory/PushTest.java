@@ -36,12 +36,12 @@ class PushTest {
     );
 
     @Container
-    static final GenericContainer<?> faktory = new GenericContainer<>(DockerImageName.parse("contribsys/faktory:latest"))
+    static final GenericContainer<?> faktory = new GenericContainer<>(DockerImageName.parse("contribsys/faktory:1.9.4"))
         .withExposedPorts(7419, 7420)
         .waitingFor(Wait.forListeningPort());
 
     @Container
-    static final GenericContainer<?> faktoryWithAuth = new GenericContainer<>(DockerImageName.parse("contribsys/faktory:latest"))
+    static final GenericContainer<?> faktoryWithAuth = new GenericContainer<>(DockerImageName.parse("contribsys/faktory:1.9.4"))
         .withEnv("FAKTORY_PASSWORD", "s3cr3t")
         .withExposedPorts(7419, 7420)
         .waitingFor(Wait.forListeningPort());
