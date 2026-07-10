@@ -39,14 +39,14 @@
 
 ## Why
 
-- What user problem does this solve? Teams need a concrete starting point for building and validating new Kestra plugins without recreating the same project scaffolding from scratch.
-- Why would a team adopt this plugin in a workflow? It gives plugin authors a ready-made reference repo they can adapt alongside their own build, test, and publishing workflow.
-- What operational/business outcome does it enable? It shortens plugin delivery time, reduces setup mistakes, and makes internal or partner plugin development more repeatable.
+- Teams running [Faktory](https://contribsys.com/faktory/)/Sidekiq-backed apps today enqueue jobs from inside the Rails app or via ad-hoc cron and scripts - there is no first-class way to trigger a Faktory job from an orchestrator.
+- This plugin lets a Kestra flow submit jobs to an existing Faktory server, so platform/data-engineering teams can migrate Ruby background workloads to Kestra one job type at a time, without touching their existing Faktory workers.
 
 ## What
 
 - Provides plugin components under `io.kestra.plugin.faktory`.
-- Includes classes such as `Example`, `Trigger`.
+- `AbstractFaktoryConnection` owns the Faktory Work Protocol (FWP) socket lifecycle (TCP/TLS connect, `HI`/`HELLO` handshake, password auth) shared by every task.
+- `Push` enqueues a job to a Faktory queue and returns its `jid`.
 
 ## Documentation
 * Full documentation can be found under: [kestra.io/docs](https://kestra.io/docs)

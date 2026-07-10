@@ -1,0 +1,39 @@
+id: sanity_scheduled_push
+namespace: sanitychecks.plugin-faktory
+
+tasks:
+  - id: docker_start
+    type: io.kestra.plugin.docker.Run
+    containerImage: contribsys/faktory:1.9.4
+    env:
+      FAKTORY_PASSWORD: s3cr3t
+    portBindings:
+      - "7419:7419"
+    wait: false
+
+  - id: schedule_report
+    type: io.kestra.plugin.faktory.Push
+    host: localhost
+    port: 7419
+    password: s3cr3t
+    jobType: GenerateNightlyReport
+    args:
+      - "2026-07-10"
+    at: "{{ now() | dateAdd(1, 'DAYS') }}"
+    retries: 5
+    custom:
+      source: kestra
+    retry:
+      type: constant
+      interval: PT2S
+      maxAttempts: 10
+
+  - id: log_jid
+    type: io.kestra.plugin.core.log.Log
+    message: "Enqueued Faktory job {{ outputs.schedule_report.jid }}"
+
+finally:
+  - id: docker_stop
+    type: io.kestra.plugin.docker.Stop
+    containerId: "{{ outputs.docker_start.taskRunner.containerId }}"
+    kill: true

@@ -1,0 +1,28 @@
+id: sanity_scheduled_push
+namespace: io.kestra.tests
+
+inputs:
+  - id: host
+    type: STRING
+  - id: port
+    type: INT
+  - id: password
+    type: STRING
+
+tasks:
+  - id: schedule_report
+    type: io.kestra.plugin.faktory.Push
+    host: "{{ inputs.host }}"
+    port: "{{ inputs.port }}"
+    password: "{{ inputs.password }}"
+    jobType: GenerateNightlyReport
+    args:
+      - "2026-07-10"
+    at: "{{ now() | dateAdd(1, 'DAYS') }}"
+    retries: 5
+    custom:
+      source: kestra
+
+  - id: log_jid
+    type: io.kestra.plugin.core.log.Log
+    message: "Enqueued Faktory job {{ outputs.schedule_report.jid }}"
