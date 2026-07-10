@@ -1,8 +1,8 @@
 plugins {
-    id 'io.kestra.gradle.repository-conventions' version '1.2.5'
+    id 'io.kestra.gradle.repository-conventions' version '1.2.6'
     id "com.vanniktech.maven.publish" version "0.37.0"
-    id "io.kestra.gradle.inject-bom-versions" version "1.2.5"
-    id "io.kestra.gradle.plugin-doc-lint" version "1.2.5"
+    id "io.kestra.gradle.inject-bom-versions" version "1.2.6"
+    id "io.kestra.gradle.plugin-doc-lint" version "1.2.6"
     id 'java-library'
     id "idea"
     id 'jacoco'
@@ -98,6 +98,10 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-engine"
     testImplementation "org.hamcrest:hamcrest"
     testImplementation "org.hamcrest:hamcrest-library"
+
+    // testcontainers
+    testImplementation "org.testcontainers:testcontainers:2.0.5"
+    testImplementation "org.testcontainers:junit-jupiter:1.21.4"
 }
 
 /**********************************************************************************************************************\

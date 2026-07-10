@@ -1,0 +1,21 @@
+id: sanity_push
+namespace: io.kestra.tests
+
+inputs:
+  - id: host
+    type: STRING
+  - id: port
+    type: INT
+  - id: password
+    type: STRING
+
+tasks:
+  - id: enqueue_welcome_email
+    type: io.kestra.plugin.faktory.Push
+    host: "{{ inputs.host }}"
+    port: "{{ inputs.port }}"
+    password: "{{ inputs.password }}"
+    jobType: SendWelcomeEmail
+    queue: mailers
+    args:
+      - "user@example.com"
