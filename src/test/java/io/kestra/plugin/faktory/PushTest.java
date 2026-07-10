@@ -50,11 +50,15 @@ class PushTest {
     private RunContextFactory runContextFactory;
 
     private Push.PushBuilder<?, ?> task() {
+        return task(faktory);
+    }
+
+    private Push.PushBuilder<?, ?> task(GenericContainer<?> container) {
         return Push.builder()
             .id("push_" + UUID.randomUUID())
             .type(Push.class.getName())
-            .host(Property.ofValue(faktory.getHost()))
-            .port(Property.ofValue(faktory.getMappedPort(7419)));
+            .host(Property.ofValue(container.getHost()))
+            .port(Property.ofValue(container.getMappedPort(7419)));
     }
 
     private RunContext runContext(Push task) {
@@ -134,11 +138,7 @@ class PushTest {
 
     @Test
     void run_withPassword_authenticatesSuccessfully() throws Exception {
-        var task = Push.builder()
-            .id("push_" + UUID.randomUUID())
-            .type(Push.class.getName())
-            .host(Property.ofValue(faktoryWithAuth.getHost()))
-            .port(Property.ofValue(faktoryWithAuth.getMappedPort(7419)))
+        var task = task(faktoryWithAuth)
             .password(Property.ofValue("s3cr3t"))
             .jobType(Property.ofValue("SendWelcomeEmail"))
             .build();
@@ -150,11 +150,7 @@ class PushTest {
 
     @Test
     void run_withWrongPassword_throws() {
-        var task = Push.builder()
-            .id("push_" + UUID.randomUUID())
-            .type(Push.class.getName())
-            .host(Property.ofValue(faktoryWithAuth.getHost()))
-            .port(Property.ofValue(faktoryWithAuth.getMappedPort(7419)))
+        var task = task(faktoryWithAuth)
             .password(Property.ofValue("wrong-password"))
             .jobType(Property.ofValue("SendWelcomeEmail"))
             .build();
