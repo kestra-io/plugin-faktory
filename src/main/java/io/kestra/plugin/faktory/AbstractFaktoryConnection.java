@@ -47,7 +47,8 @@ public abstract class AbstractFaktoryConnection extends Task {
 
     @Schema(
         title = "Faktory server host",
-        description = "Hostname or IP address of the Faktory server. Defaults to `localhost`."
+        description = """
+            Hostname or IP address of the Faktory server. Defaults to `localhost`."""
     )
     @PluginProperty(group = "connection")
     @Builder.Default
@@ -55,7 +56,8 @@ public abstract class AbstractFaktoryConnection extends Task {
 
     @Schema(
         title = "Faktory server port",
-        description = "TCP port the Faktory server listens on, between 1 and 65535. Defaults to `7419`."
+        description = """
+            TCP port the Faktory server listens on, between 1 and 65535. Defaults to `7419`."""
     )
     @PluginProperty(group = "connection")
     @Builder.Default
@@ -63,14 +65,17 @@ public abstract class AbstractFaktoryConnection extends Task {
 
     @Schema(
         title = "Faktory password",
-        description = "Password used to authenticate with a password-protected Faktory server. Leave empty to connect without credentials."
+        description = """
+            Password used to authenticate with a password-protected Faktory server. Leave empty to connect without credentials."""
     )
     @PluginProperty(group = "connection", secret = true)
+    @ToString.Exclude
     private Property<String> password;
 
     @Schema(
         title = "Use TLS",
-        description = "Whether to establish the connection over TLS (`tcp+tls://`). Defaults to `false`."
+        description = """
+            Whether to establish the connection over TLS (`tcp+tls://`). Defaults to `false`."""
     )
     @PluginProperty(group = "connection")
     @Builder.Default
@@ -167,13 +172,24 @@ public abstract class AbstractFaktoryConnection extends Task {
     }
 
     protected static String sendAndReceive(BufferedWriter writer, BufferedReader reader, String command) throws IOException {
-        writer.write(command);
-        writer.write("\r\n");
-        writer.flush();
+        var operation = command.split(" ", 2)[0];
 
-        var reply = reader.readLine();
+        try {
+            writer.write(command);
+            writer.write("\r\n");
+            writer.flush();
+        } catch (IOException e) {
+            throw new IOException("Failed to send the '" + operation + "' command to the Faktory server: " + e.getMessage(), e);
+        }
+
+        String reply;
+        try {
+            reply = reader.readLine();
+        } catch (IOException e) {
+            throw new IOException("Failed to read the Faktory server's reply to the '" + operation + "' command: " + e.getMessage(), e);
+        }
         if (reply == null) {
-            throw new IOException("Faktory server closed the connection unexpectedly while waiting for a reply to '" + command.split(" ", 2)[0] + "'");
+            throw new IOException("Faktory server closed the connection unexpectedly while waiting for a reply to '" + operation + "'");
         }
         return reply;
     }

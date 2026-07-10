@@ -9,7 +9,7 @@ Every task connects using:
 - `host` - hostname or IP address of the Faktory server, defaults to `localhost`.
 - `port` - TCP port the server listens on, defaults to `7419`.
 - `password` - required only if the server is password-protected. Store it as a [secret](https://kestra.io/docs/concepts/secret) and reference it with `{{ secret('FAKTORY_PASSWORD') }}` - never hardcode it in a flow.
-- `tls` - set to `true` to connect over TLS (`tcp+tls://`), defaults to `false`.
+- `tls` - set to `true` to connect over TLS (`tcp+tls://`), defaults to `false`. The connection verifies the server's certificate against the JVM's trust store, so a server presenting a self-signed certificate will fail to connect unless that certificate is added to the trust store.
 
 On connect, the server greets the client with its protocol version and, if password-protected, a salt and iteration count. The plugin replies with the SHA256-iterated password hash automatically; the plain password itself is never sent over the wire or logged.
 

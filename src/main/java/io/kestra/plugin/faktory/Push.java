@@ -94,7 +94,8 @@ public class Push extends AbstractFaktoryConnection implements RunnableTask<Push
 
     @Schema(
         title = "Job type",
-        description = "The Faktory `jobtype` identifying which worker handles this job."
+        description = """
+            The Faktory `jobtype` identifying which worker handles this job."""
     )
     @PluginProperty(group = "main")
     @NotNull
@@ -102,14 +103,16 @@ public class Push extends AbstractFaktoryConnection implements RunnableTask<Push
 
     @Schema(
         title = "Job arguments",
-        description = "JSON-native arguments passed to the worker (strings, numbers, booleans, objects, arrays). Defaults to an empty list."
+        description = """
+            JSON-native arguments passed to the worker (strings, numbers, booleans, objects, arrays). Defaults to an empty list."""
     )
     @PluginProperty(group = "main")
     private Property<List<Object>> args;
 
     @Schema(
         title = "Queue",
-        description = "The Faktory queue the job is pushed to. Defaults to `default`."
+        description = """
+            The Faktory queue the job is pushed to. Defaults to `default`."""
     )
     @PluginProperty(group = "processing")
     @Builder.Default
@@ -117,14 +120,18 @@ public class Push extends AbstractFaktoryConnection implements RunnableTask<Push
 
     @Schema(
         title = "Schedule for later",
-        description = "If set, the job is not eligible for pickup by a worker until this instant; Faktory holds the job until then."
+        description = """
+            If set, the job is not eligible for pickup by a worker until this instant; Faktory holds the job until then."""
     )
     @PluginProperty(group = "processing")
     private Property<Instant> at;
 
     @Schema(
         title = "Retry count",
-        description = "Number of times Faktory retries this job before moving it to the dead queue, between -1 and 1000. A negative value discards the job immediately on failure instead of retrying it or moving it to the dead queue. Defaults to `25`."
+        description = """
+            Number of times Faktory retries this job before moving it to the dead queue, between -1 and 1000. \
+            A negative value discards the job immediately on failure instead of retrying it or moving it to the dead queue. \
+            Defaults to `25`."""
     )
     @PluginProperty(group = "reliability")
     @Builder.Default
@@ -132,7 +139,9 @@ public class Push extends AbstractFaktoryConnection implements RunnableTask<Push
 
     @Schema(
         title = "Reservation timeout",
-        description = "How long a worker may hold this job before Faktory considers it timed out and reschedules it. Must be at least `PT60S` (60 seconds). Defaults to `PT30M` (30 minutes)."
+        description = """
+            How long a worker may hold this job before Faktory considers it timed out and reschedules it. \
+            Must be at least `PT60S` (60 seconds). Defaults to `PT30M` (30 minutes)."""
     )
     @PluginProperty(group = "reliability")
     @Builder.Default
@@ -140,14 +149,17 @@ public class Push extends AbstractFaktoryConnection implements RunnableTask<Push
 
     @Schema(
         title = "Job id",
-        description = "A custom identifier for the enqueued job (Faktory `jid`), must be unique. If not set, a random UUID is generated and returned as the `jid` output."
+        description = """
+            A custom identifier for the enqueued job (Faktory `jid`), must be unique. \
+            If not set, a random UUID is generated and returned as the `jid` output."""
     )
     @PluginProperty(group = "advanced")
     private Property<String> jobId;
 
     @Schema(
         title = "Custom metadata",
-        description = "Arbitrary metadata attached to the job payload's `custom` field, made available to the worker at fetch time."
+        description = """
+            Arbitrary metadata attached to the job payload's `custom` field, made available to the worker at fetch time."""
     )
     @PluginProperty(group = "advanced")
     private Property<Map<String, Object>> custom;
@@ -206,7 +218,8 @@ public class Push extends AbstractFaktoryConnection implements RunnableTask<Push
     public static class Output implements io.kestra.core.models.tasks.Output {
         @Schema(
             title = "Job id",
-            description = "The Faktory job id (`jid`) of the enqueued job - either the provided `jobId` or an auto-generated UUID."
+            description = """
+                The Faktory job id (`jid`) of the enqueued job - either the provided `jobId` or an auto-generated UUID."""
         )
         private final String jid;
     }
