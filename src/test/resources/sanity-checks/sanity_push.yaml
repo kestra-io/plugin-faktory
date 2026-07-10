@@ -1,0 +1,32 @@
+id: sanity_push
+namespace: sanitychecks.plugin-faktory
+
+tasks:
+  - id: docker_start
+    type: io.kestra.plugin.docker.Run
+    containerImage: contribsys/faktory:1.9.4
+    env:
+      FAKTORY_PASSWORD: s3cr3t
+    portBindings:
+      - "7419:7419"
+    wait: false
+
+  - id: enqueue_welcome_email
+    type: io.kestra.plugin.faktory.Push
+    host: localhost
+    port: 7419
+    password: s3cr3t
+    jobType: SendWelcomeEmail
+    queue: mailers
+    args:
+      - "user@example.com"
+    retry:
+      type: constant
+      interval: PT2S
+      maxAttempts: 10
+
+finally:
+  - id: docker_stop
+    type: io.kestra.plugin.docker.Stop
+    containerId: "{{ outputs.docker_start.taskRunner.containerId }}"
+    kill: true
