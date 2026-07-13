@@ -1,0 +1,39 @@
+id: all_faktory
+namespace: sanitychecks.plugin-faktory
+
+tasks:
+  - id: init
+    type: io.kestra.plugin.core.output.OutputValues
+    values:
+      randomPort: "{{ randomPort() }}"
+
+  - id: dockerStart
+    type: io.kestra.plugin.docker.Run
+    containerImage: contribsys/faktory:1.9.4
+    env:
+      FAKTORY_PASSWORD: s3cr3t
+    portBindings:
+      - "{{ outputs.init.values.randomPort }}:7419"
+    wait: false
+
+  - id: call_subflows_in_loop
+    type: io.kestra.plugin.core.flow.ForEach
+    values:
+      - push
+      - scheduled_push
+    tasks:
+      - id: call-subflow-task
+        type: io.kestra.plugin.core.flow.Subflow
+        namespace: "{{ flow.namespace }}"
+        flowId: "{{ taskrun.value }}"
+        wait: true
+        transmitFailed: true
+        inputs:
+          host: localhost
+          port: "{{ outputs.init.values.randomPort }}"
+          password: s3cr3t
+
+finally:
+  - id: dockerStop
+    type: io.kestra.plugin.docker.Stop
+    containerId: "{{ outputs.dockerStart.taskRunner.containerId }}"

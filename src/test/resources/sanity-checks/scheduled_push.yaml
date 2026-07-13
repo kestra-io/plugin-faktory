@@ -1,0 +1,41 @@
+id: scheduled_push
+namespace: sanitychecks.plugin-faktory
+
+inputs:
+  - id: host
+    type: STRING
+    defaults: localhost
+  - id: port
+    type: INT
+    defaults: 7419
+  - id: password
+    type: STRING
+    defaults: s3cr3t
+
+tasks:
+  - id: schedule_report
+    type: io.kestra.plugin.faktory.Push
+    host: "{{ inputs.host }}"
+    port: "{{ inputs.port }}"
+    password: "{{ inputs.password }}"
+    jobType: GenerateNightlyReport
+    args:
+      - "2026-07-10"
+    at: "{{ now() | dateAdd(1, 'DAYS') }}"
+    retries: 5
+    custom:
+      source: kestra
+    retry:
+      type: constant
+      interval: PT2S
+      maxAttempts: 10
+
+  - id: log_jid
+    type: io.kestra.plugin.core.log.Log
+    message: "Enqueued Faktory job {{ outputs.schedule_report.jid }}"
+
+  - id: assert
+    type: io.kestra.plugin.core.execution.Assert
+    errorMessage: "Invalid push output {{ outputs.schedule_report }}"
+    conditions:
+      - "{{ outputs.schedule_report.jid is not null }}"

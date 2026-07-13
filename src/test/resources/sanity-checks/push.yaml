@@ -1,0 +1,34 @@
+id: push
+namespace: sanitychecks.plugin-faktory
+
+inputs:
+  - id: host
+    type: STRING
+    defaults: localhost
+  - id: port
+    type: INT
+    defaults: 7419
+  - id: password
+    type: STRING
+    defaults: s3cr3t
+
+tasks:
+  - id: enqueue_welcome_email
+    type: io.kestra.plugin.faktory.Push
+    host: "{{ inputs.host }}"
+    port: "{{ inputs.port }}"
+    password: "{{ inputs.password }}"
+    jobType: SendWelcomeEmail
+    queue: mailers
+    args:
+      - "user@example.com"
+    retry:
+      type: constant
+      interval: PT2S
+      maxAttempts: 10
+
+  - id: assert
+    type: io.kestra.plugin.core.execution.Assert
+    errorMessage: "Invalid push output {{ outputs.enqueue_welcome_email }}"
+    conditions:
+      - "{{ outputs.enqueue_welcome_email.jid is not null }}"
