@@ -25,6 +25,10 @@ tasks:
     retries: 5
     custom:
       source: kestra
+    retry:
+      type: constant
+      interval: PT2S
+      maxAttempts: 10
 
   - id: log_jid
     type: io.kestra.plugin.core.log.Log

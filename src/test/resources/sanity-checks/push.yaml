@@ -22,6 +22,10 @@ tasks:
     queue: mailers
     args:
       - "user@example.com"
+    retry:
+      type: constant
+      interval: PT2S
+      maxAttempts: 10
 
   - id: assert
     type: io.kestra.plugin.core.execution.Assert
