@@ -13,7 +13,7 @@ Every task connects using:
 
 On connect, the server greets the client with its protocol version and, if password-protected, a salt and iteration count. The plugin replies with the SHA256-iterated password hash automatically; the plain password itself is never sent over the wire or logged.
 
-Connection properties are shared across tasks, so consider setting them once via [plugin defaults](https://kestra.io/docs/workflow-components/plugin-defaults) if you have several Faktory tasks in the same namespace.
+Connection properties must be set on each task, so repeat them on every Faktory task in the flow.
 
 ## Tasks
 
