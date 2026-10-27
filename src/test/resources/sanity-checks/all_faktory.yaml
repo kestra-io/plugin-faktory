@@ -18,7 +18,6 @@ tasks:
 
   - id: call_subflows_in_loop
     type: io.kestra.plugin.core.flow.Loop
-    concurrencyLimit: 1
     values:
       - push
       - scheduled_push
