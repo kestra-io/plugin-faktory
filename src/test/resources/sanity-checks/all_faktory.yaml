@@ -16,13 +16,13 @@ tasks:
       - "{{ outputs.init.values.randomPort }}:7419"
     wait: false
 
-  - id: call_subflows_in_loop
+  - id: loop
     type: io.kestra.plugin.core.flow.Loop
     values:
       - push
       - scheduled_push
     tasks:
-      - id: call-subflow-task
+      - id: subflow
         type: io.kestra.plugin.core.flow.Subflow
         namespace: "{{ flow.namespace }}"
         flowId: "{{ item.value }}"
